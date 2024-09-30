@@ -1,0 +1,54 @@
+<div class="p-6 bg-white rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold text-blue-600 mb-4">Lista de Tareas</h2>
+
+  <div class="mb-4 flex justify-end">
+    <button (click)="navigateToCreateTask()" class="bg-blue-600 text-white py-2 px-4 rounded">Agregar Tarea</button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="mb-4 flex space-x-4 text-red-600">
+    <button (click)="filterTasks('all')" class="hover:underline">[Todas]</button>
+    <button (click)="filterTasks('completed')" class="hover:underline">[Completadas]</button>
+    <button (click)="filterTasks('pending')" class="hover:underline">[Pendientes]</button>
+  </div>
+
+  <!-- Lista de Tareas -->
+  <ul class="space-y-6">
+    <li *ngFor="let task of tasks$ | async; let index = index" class="p-4 bg-gray-100 rounded border border-gray-300">
+      <div class="flex justify-between items-center">
+        <div class="font-bold text-lg">
+          {{ index + 1 }}. 
+          <span [ngClass]="task.completed ? 'text-green-600' : 'text-red-600'">
+            [{{ task.completed ? 'x' : ' ' }}]
+          </span>
+          {{ task.name }} - {{ task.dueDate }}
+        </div>
+        <div class="flex items-center space-x-4">
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" [checked]="task.completed" (change)="toggleTaskStatus(task)" />
+            <span>{{ task.completed ? 'Completada' : 'Pendiente' }}</span>
+          </label>
+    
+          <button (click)="confirmDeleteTask(task)" class="text-red-500 hover:text-red-700">
+            Eliminar
+          </button>
+
+          <button (click)="navigateToEditTask(task.id)" class="text-blue-500 hover:text-blue-700">
+            Editar
+          </button>
+        </div>
+      </div>
+
+      <!-- Personas asociadas -->
+      <div class="ml-4 mt-2">
+        <div class="font-semibold">Personas Asociadas:</div>
+        <ul>
+          <li *ngFor="let person of task.persons">
+            - {{ person.fullName }} ({{ person.age }})
+            <div class="ml-4">Habilidades: {{ formatSkills(person) }}</div>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</div>

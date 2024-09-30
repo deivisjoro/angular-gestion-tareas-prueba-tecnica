@@ -1,0 +1,138 @@
+<div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+  <h2 class="text-xl font-bold mb-4">Crear Nueva Tarea</h2>
+
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <!-- Nombre de la tarea -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700" for="name">Nombre</label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        placeholder="Nombre de la tarea"
+      />
+      <div *ngIf="taskForm.get('name')?.invalid && taskForm.get('name')?.touched" class="text-red-500 text-sm">
+        El nombre es requerido
+      </div>
+    </div>
+
+    <!-- Fecha de vencimiento -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700" for="dueDate">Fecha de Vencimiento</label>
+      <input
+        type="date"
+        id="dueDate"
+        formControlName="dueDate"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+      />
+      <div *ngIf="taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched" class="text-red-500 text-sm">
+        La fecha de vencimiento es requerida
+      </div>
+    </div>
+
+    <!-- Completado -->
+    <div class="flex items-center">
+      <input
+        type="checkbox"
+        id="completed"
+        formControlName="completed"
+        class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+      />
+      <label for="completed" class="ml-2 block text-sm text-gray-900">¿Completado?</label>
+    </div>
+
+    <h3 class="text-lg font-semibold mb-2">Personas asociadas</h3>
+    <div *ngIf="showPersonError" class="text-red-500 text-sm mb-2">
+      Debe haber al menos una persona asociada a la tarea.
+    </div>
+    <div formArrayName="persons" class="space-y-4">
+      <div *ngFor="let person of persons.controls; let i = index" [formGroupName]="i" class="bg-gray-100 p-4 rounded-lg">
+        <!-- Nombre completo de la persona -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700" for="fullName">Nombre Completo</label>
+          <input
+            type="text"
+            id="fullName"
+            formControlName="fullName"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            placeholder="Nombre completo"
+          />
+          <div *ngIf="person.get('fullName')?.invalid && person.get('fullName')?.touched" class="text-red-500 text-sm">
+            <div *ngIf="person.get('fullName')?.hasError('minlength')">
+              Debe tener al menos 5 caracteres.
+            </div>            
+          </div>
+        </div>
+
+        <div *ngIf="persons.errors?.['uniqueName']" class="text-red-500 text-sm">
+          No pueden haber personas con nombres duplicados en la misma tarea.
+        </div>
+
+        <!-- Edad de la persona -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700" for="age">Edad</label>
+          <input
+            type="number"
+            id="age"
+            formControlName="age"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            placeholder="Edad"
+          />
+          <div *ngIf="person.get('age')?.invalid && person.get('age')?.touched" class="text-red-500 text-sm">
+            {{ person.get('age')?.hasError('min') ? 'Debe ser mayor de 18 años.' : 'La edad es requerida.' }}
+          </div>
+        </div>
+
+        <h4 class="text-md font-semibold mb-2 mt-4">Habilidades</h4>
+        <div *ngIf="person.get('skills')?.hasError('noSkill')" class="text-red-500 text-sm mb-2">
+          Debe haber al menos una habilidad.
+        </div>
+        <div formArrayName="skills">
+          <div *ngFor="let skill of getSkills(i).controls; let j = index" [formGroupName]="j" class="mb-2">
+            <input
+              type="text"
+              formControlName="skill"
+              placeholder="Habilidad"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            />
+            <div *ngIf="skill.get('skill')?.invalid && skill.get('skill')?.touched" class="text-red-500 text-sm">
+              La habilidad es requerida.
+            </div>
+            <button type="button" (click)="removeSkill(i, j)" class="text-red-500 hover:text-red-700">
+              Eliminar Habilidad
+            </button>
+          </div>
+        </div>
+
+       
+        <button type="button" (click)="addSkill(i)" class="text-indigo-500 hover:text-indigo-700">
+          Agregar Habilidad
+        </button>
+
+        <div class="mt-4">
+          <button type="button" (click)="removePerson(i)" class="text-red-500 hover:text-red-700">
+            Eliminar Persona
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón para agregar persona -->
+    <div class="mt-4">
+      <button type="button" (click)="addPerson()" class="text-indigo-500 hover:text-indigo-700">
+        Agregar Persona
+      </button>
+    </div>
+
+    <!-- Botón de crear -->
+    <div>
+      <button
+        type="submit"
+        class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        Crear Tarea
+      </button>
+    </div>
+  </form>
+</div>

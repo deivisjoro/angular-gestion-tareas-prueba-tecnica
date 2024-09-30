@@ -1,0 +1,26 @@
+<div class="p-6 bg-white rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold text-blue-600 mb-4">Lista de Personas</h2>
+
+  <div class="mb-4 flex justify-end">
+    <button (click)="navigateToAddPerson()" class="bg-blue-600 text-white py-2 px-4 rounded">Agregar Persona</button>
+  </div>
+
+  <ul class="space-y-2">
+    <li *ngFor="let person of persons$ | async" class="p-4 bg-gray-100 rounded flex flex-col md:flex-row justify-between items-start md:items-center">
+      <div class="md:w-3/4">
+        <strong>{{ person.fullName }}</strong> - Edad: {{ person.age }} - Habilidades:
+        <ul class="ml-4">
+          <li *ngFor="let skill of person.skills">{{ skill }}</li>
+        </ul>
+      </div>
+      <div class="flex mt-4 md:mt-0 space-x-4">
+        <button (click)="editPerson(person)" class="bg-yellow-400 text-white py-1 px-3 rounded">
+          Editar
+        </button>
+        <button (click)="deletePerson(person.id)" class="bg-red-600 text-white py-1 px-3 rounded">
+          Eliminar
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>

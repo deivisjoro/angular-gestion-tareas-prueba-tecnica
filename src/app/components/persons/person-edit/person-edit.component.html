@@ -1,0 +1,41 @@
+<div class="p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold text-blue-600 mb-4">Editar Persona</h2>
+  
+    <div class="p-6 bg-white rounded-lg shadow-md max-w-md mx-auto">
+      <form [formGroup]="personForm" (ngSubmit)="onSubmit()">
+        <div class="mb-4">
+          <label for="fullName" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+          <input id="fullName" formControlName="fullName" type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+          <div *ngIf="personForm.controls['fullName'].invalid && personForm.controls['fullName'].touched" class="text-red-500 text-sm">
+            El nombre debe tener al menos 5 caracteres.
+          </div>
+        </div>
+  
+        <div class="mb-4">
+          <label for="age" class="block text-sm font-medium text-gray-700">Edad</label>
+          <input id="age" formControlName="age" type="number" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+          <div *ngIf="personForm.controls['age'].invalid && personForm.controls['age'].touched" class="text-red-500 text-sm">
+            La edad debe ser mayor a 18 años.
+          </div>
+        </div>
+  
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700">Habilidades</label>
+          <div formArrayName="skills">
+            <div *ngFor="let skill of skills.controls; let i = index">
+              <input [formControlName]="i" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" />
+              <button (click)="removeSkill(i)" type="button" class="text-red-500 text-sm">Eliminar</button>
+              <div *ngIf="skill.invalid && skill.touched" class="text-red-500 text-sm">La habilidad es requerida.</div>
+            </div>
+          </div>
+          <button type="button" (click)="addSkill()" class="mt-2 text-blue-500 text-sm">Añadir Habilidad</button>
+        </div>
+  
+        <div class="flex space-x-6">
+          <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded">Guardar Cambios</button>
+          <button type="button" (click)="navigateToPersonList()" class="bg-gray-500 text-white py-2 px-4 rounded">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
